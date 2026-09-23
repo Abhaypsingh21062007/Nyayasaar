@@ -3,40 +3,48 @@ import { CheckCircle2, XCircle, Info, X } from 'lucide-react';
 const VARIANTS = {
   success: {
     icon: CheckCircle2,
-    bg: 'bg-emerald-50 border-emerald-200',
-    iconColor: 'text-emerald-600',
-    textColor: 'text-emerald-900',
+    bg: 'rgba(16,185,129,0.1)',
+    border: 'rgba(16,185,129,0.25)',
+    iconColor: 'text-emerald-400',
+    textColor: 'text-emerald-100',
   },
   error: {
     icon: XCircle,
-    bg: 'bg-red-50 border-red-200',
-    iconColor: 'text-red-600',
-    textColor: 'text-red-900',
+    bg: 'rgba(239,68,68,0.1)',
+    border: 'rgba(239,68,68,0.25)',
+    iconColor: 'text-red-400',
+    textColor: 'text-red-100',
   },
   info: {
     icon: Info,
-    bg: 'bg-blue-50 border-blue-200',
-    iconColor: 'text-blue-600',
-    textColor: 'text-blue-900',
+    bg: 'rgba(59,130,246,0.1)',
+    border: 'rgba(59,130,246,0.25)',
+    iconColor: 'text-blue-400',
+    textColor: 'text-blue-100',
   },
 };
 
 function ToastItem({ toast, onDismiss }) {
-  const variant = VARIANTS[toast.type] || VARIANTS.info;
-  const Icon = variant.icon;
+  const v = VARIANTS[toast.type] || VARIANTS.info;
+  const Icon = v.icon;
 
   return (
     <div
-      className={`flex items-start gap-2.5 px-4 py-3 rounded-xl border shadow-lg backdrop-blur-sm max-w-sm w-full
-        ${variant.bg} toast-slide-in`}
+      className="flex items-start gap-2.5 px-4 py-3 rounded-xl max-w-sm w-full toast-slide-in"
+      style={{
+        background: v.bg,
+        border: `1px solid ${v.border}`,
+        backdropFilter: 'blur(20px)',
+        boxShadow: '0 8px 32px rgba(0,0,0,0.4)',
+      }}
       role="alert"
     >
-      <Icon className={`w-4.5 h-4.5 flex-shrink-0 mt-0.5 ${variant.iconColor}`} />
-      <p className={`text-sm font-medium flex-1 ${variant.textColor}`}>{toast.message}</p>
+      <Icon className={`w-4 h-4 flex-shrink-0 mt-0.5 ${v.iconColor}`} />
+      <p className={`text-sm font-medium flex-1 ${v.textColor}`}>{toast.message}</p>
       <button
         type="button"
         onClick={() => onDismiss(toast.id)}
-        className="p-0.5 rounded-md hover:bg-black/5 text-slate-400 hover:text-slate-600 transition-colors flex-shrink-0"
+        className="p-0.5 rounded-md hover:bg-white/10 text-slate-500 hover:text-slate-300 transition-colors flex-shrink-0"
         aria-label="Dismiss notification"
       >
         <X className="w-3.5 h-3.5" />
@@ -45,10 +53,6 @@ function ToastItem({ toast, onDismiss }) {
   );
 }
 
-/**
- * ToastContainer — renders stacked toast notifications at top-right.
- * Pass toasts array and dismiss function from useToast() hook.
- */
 export default function ToastContainer({ toasts = [], onDismiss }) {
   if (toasts.length === 0) return null;
 

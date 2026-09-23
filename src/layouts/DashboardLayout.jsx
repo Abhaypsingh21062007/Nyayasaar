@@ -6,39 +6,40 @@ import useToast from '../hooks/useToast';
 /* ── Toast Context ──────────────────────────────────────────────────────── */
 const ToastContext = createContext(null);
 
-/** Use this hook from any page/component to call toast.success(), toast.error(), etc. */
 export function useAppToast() {
   return useContext(ToastContext);
 }
 
-/**
- * DashboardLayout — two-column layout: sidebar (fixed) + scrollable main area.
- * Provides global toast notifications via ToastContext.
- */
 export default function DashboardLayout({ children }) {
   const { toasts, toast, dismiss } = useToast();
 
   return (
     <ToastContext.Provider value={toast}>
-      <a href="#main-content" className="skip-to-content">
-        Skip to content
-      </a>
-      <div className="flex h-screen bg-slate-50 overflow-hidden">
+      <a href="#main-content" className="skip-to-content">Skip to content</a>
+
+      {/* Ambient background orbs */}
+      <div
+        className="fixed top-[-20%] left-[-10%] w-[500px] h-[500px] rounded-full pointer-events-none z-0 orb-float"
+        style={{ background: 'radial-gradient(circle, rgba(124,58,237,0.15) 0%, transparent 70%)', filter: 'blur(60px)' }}
+      />
+      <div
+        className="fixed bottom-[-20%] right-[-10%] w-[600px] h-[600px] rounded-full pointer-events-none z-0"
+        style={{ background: 'radial-gradient(circle, rgba(79,70,229,0.1) 0%, transparent 70%)', filter: 'blur(80px)' }}
+      />
+
+      <div className="flex h-screen overflow-hidden relative z-10">
         <Sidebar />
 
-        {/* Main content area */}
         <div className="flex-1 flex flex-col overflow-hidden">
-          {/* Top bar (mobile only — gives space for the hamburger button) */}
+          {/* Mobile top spacer */}
           <div className="md:hidden h-14 flex-shrink-0" />
 
-          {/* Scrollable page content */}
           <main id="main-content" className="flex-1 overflow-y-auto">
             {children}
           </main>
         </div>
       </div>
 
-      {/* Global Toast Notifications */}
       <ToastContainer toasts={toasts} onDismiss={dismiss} />
     </ToastContext.Provider>
   );

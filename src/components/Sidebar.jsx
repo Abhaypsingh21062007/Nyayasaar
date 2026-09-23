@@ -14,9 +14,7 @@ import {
   X,
   ChevronRight,
   ShieldCheck,
-  CheckCircle2,
   Sparkles,
-  ExternalLink,
 } from 'lucide-react';
 import { sidebarNavItems } from '../data/mockData';
 
@@ -36,18 +34,25 @@ function NavItem({ item, onClick }) {
       to={item.path}
       onClick={onClick}
       className={({ isActive }) =>
-        `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-150 group
+        `flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 group relative
          ${isActive
-           ? 'bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-sm'
-           : 'text-slate-500 hover:text-slate-800 hover:bg-slate-100'
+           ? 'text-white nav-active'
+           : 'text-slate-400 hover:text-slate-200 hover:bg-white/5'
          }`
       }
     >
       {({ isActive }) => (
         <>
-          <Icon className={`w-4 h-4 flex-shrink-0 ${isActive ? 'text-white' : 'text-slate-400 group-hover:text-slate-600'}`} />
+          {isActive && (
+            <span className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-5 bg-violet-400 rounded-full" />
+          )}
+          <Icon
+            className={`w-4 h-4 flex-shrink-0 transition-colors ${
+              isActive ? 'text-violet-400' : 'text-slate-500 group-hover:text-slate-300'
+            }`}
+          />
           <span>{item.label}</span>
-          {isActive && <ChevronRight className="w-3.5 h-3.5 ml-auto opacity-60" />}
+          {isActive && <ChevronRight className="w-3.5 h-3.5 ml-auto text-violet-400/70" />}
         </>
       )}
     </NavLink>
@@ -55,35 +60,45 @@ function NavItem({ item, onClick }) {
 }
 
 /* ── Modal Dialog ────────────────────────────────────────────── */
-function Modal({ isOpen, onClose, title, icon: Icon, iconColor = 'text-slate-900', iconBg = 'bg-slate-100', children }) {
+function Modal({ isOpen, onClose, title, icon: Icon, iconColor = 'text-violet-400', iconBg = 'bg-violet-500/10', children }) {
   if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 z-[110] flex items-center justify-center p-4">
-      <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative w-full max-w-lg bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden animate-in fade-in zoom-in-95 duration-200">
-        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 bg-slate-50/50">
+      <div className="fixed inset-0 bg-black/60 backdrop-blur-md" onClick={onClose} />
+      <div
+        className="relative w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden animate-in fade-in duration-200"
+        style={{
+          background: 'rgba(15,17,30,0.95)',
+          border: '1px solid rgba(255,255,255,0.1)',
+          boxShadow: '0 25px 60px rgba(0,0,0,0.6), 0 0 0 1px rgba(139,92,246,0.15)',
+        }}
+      >
+        {/* Header */}
+        <div className="flex items-center justify-between px-6 py-4 border-b border-white/[0.06]">
           <div className="flex items-center gap-2.5">
             <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${iconBg}`}>
               <Icon className={`w-4 h-4 ${iconColor}`} />
             </div>
-            <h3 className="text-base font-bold text-slate-900">{title}</h3>
+            <h3 className="text-base font-bold text-white">{title}</h3>
           </div>
           <button
             onClick={onClose}
             aria-label="Close"
-            className="p-1 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-slate-600 transition-colors"
+            className="p-1.5 rounded-lg hover:bg-white/10 text-slate-500 hover:text-slate-300 transition-colors"
           >
             <X className="w-4 h-4" />
           </button>
         </div>
-        <div className="p-6 text-sm text-slate-600 leading-relaxed max-h-[70vh] overflow-y-auto space-y-4">
+        {/* Body */}
+        <div className="p-6 text-sm text-slate-400 leading-relaxed max-h-[70vh] overflow-y-auto space-y-4">
           {children}
         </div>
-        <div className="px-6 py-3 border-t border-slate-100 bg-slate-50 flex justify-end">
+        {/* Footer */}
+        <div className="px-6 py-3 border-t border-white/[0.06] flex justify-end">
           <button
             onClick={onClose}
-            className="px-4 py-2 rounded-lg bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold shadow-sm transition-colors"
+            className="btn-primary text-xs py-2 px-4"
           >
             Close
           </button>
@@ -93,64 +108,66 @@ function Modal({ isOpen, onClose, title, icon: Icon, iconColor = 'text-slate-900
   );
 }
 
-/* ── Sidebar content (shared between desktop + mobile) ── */
+/* ── Sidebar Content ─────────────────────────────────────────── */
 function SidebarContent({ onClose, onOpenHelp, onOpenDisclaimer }) {
   const navigate = useNavigate();
 
   return (
     <div className="flex flex-col h-full">
       {/* Logo */}
-      <div className="flex items-center justify-between px-4 h-16 border-b border-slate-100 flex-shrink-0">
+      <div className="flex items-center justify-between px-4 h-16 border-b border-white/[0.06] flex-shrink-0">
         <button
           onClick={() => { navigate('/'); onClose?.(); }}
-          className="flex items-center gap-2 group"
+          className="flex items-center gap-2.5 group"
         >
-          <div className="w-7 h-7 bg-gradient-to-br from-violet-600 to-indigo-600 rounded-md flex items-center justify-center shadow-sm group-hover:opacity-90 transition-opacity">
+          <div
+            className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 animate-pulse-glow"
+            style={{ background: 'linear-gradient(135deg, #7c3aed, #4f46e5)' }}
+          >
             <Scale className="w-4 h-4 text-white" strokeWidth={2.5} />
           </div>
-          <span className="text-base font-extrabold text-slate-900 tracking-tight">
-            Nyaya<span className="bg-gradient-to-r from-violet-600 to-indigo-600 bg-clip-text text-transparent">Saar</span>
+          <span className="text-base font-extrabold tracking-tight">
+            <span className="text-slate-100">Nyaya</span>
+            <span className="animate-shimmer">Saar</span>
           </span>
         </button>
-        {/* Close button (mobile only) */}
         {onClose && (
-          <button onClick={onClose} aria-label="Close" className="p-1.5 rounded-lg hover:bg-slate-100 text-slate-400 md:hidden">
+          <button
+            onClick={onClose}
+            aria-label="Close"
+            className="p-1.5 rounded-lg hover:bg-white/10 text-slate-500 md:hidden"
+          >
             <X className="w-4 h-4" />
           </button>
         )}
       </div>
 
-      {/* Nav items */}
-      <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-1">
+      {/* Nav */}
+      <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-0.5">
         {sidebarNavItems.map((item) => (
           <NavItem key={item.path} item={item} onClick={onClose} />
         ))}
       </nav>
 
-      {/* Bottom utility links */}
-      <div className="px-3 pb-4 border-t border-slate-100 pt-4 space-y-1">
+      {/* Bottom */}
+      <div className="px-3 pb-4 border-t border-white/[0.06] pt-3 space-y-0.5">
         <button
           onClick={() => { onOpenHelp(); onClose?.(); }}
-          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-500 hover:text-slate-800 hover:bg-slate-100 transition-colors"
+          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-500 hover:text-slate-200 hover:bg-white/5 transition-all"
         >
-          <HelpCircle className="w-4 h-4 text-slate-400" /> Help & Features
+          <HelpCircle className="w-4 h-4" /> Help &amp; Features
         </button>
         <button
           onClick={() => { onOpenDisclaimer(); onClose?.(); }}
-          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-500 hover:text-slate-800 hover:bg-slate-100 transition-colors"
+          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-500 hover:text-slate-200 hover:bg-white/5 transition-all"
         >
-          <AlertCircle className="w-4 h-4 text-slate-400" /> Legal Disclaimer
+          <AlertCircle className="w-4 h-4" /> Legal Disclaimer
         </button>
       </div>
     </div>
   );
 }
 
-/**
- * Sidebar — renders:
- *   - Desktop: fixed left column (w-60)
- *   - Mobile: slide-in drawer triggered by hamburger in DashboardLayout
- */
 export default function Sidebar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [helpOpen, setHelpOpen] = useState(false);
@@ -158,33 +175,42 @@ export default function Sidebar() {
 
   return (
     <>
-      {/* ── Desktop sidebar ── */}
-      <aside className="hidden md:flex flex-col w-60 flex-shrink-0 bg-white border-r border-slate-100 h-screen sticky top-0">
+      {/* Desktop */}
+      <aside
+        className="hidden md:flex flex-col w-60 flex-shrink-0 h-screen sticky top-0"
+        style={{
+          background: 'rgba(8,9,18,0.95)',
+          borderRight: '1px solid rgba(255,255,255,0.06)',
+          backdropFilter: 'blur(20px)',
+        }}
+      >
         <SidebarContent
           onOpenHelp={() => setHelpOpen(true)}
           onOpenDisclaimer={() => setDisclaimerOpen(true)}
         />
       </aside>
 
-      {/* ── Mobile hamburger trigger (injected by DashboardLayout header) ── */}
+      {/* Mobile hamburger */}
       <button
         onClick={() => setMobileOpen(true)}
-        className="md:hidden fixed top-3.5 left-4 z-40 p-2 rounded-lg bg-white border border-slate-200 shadow-sm text-slate-600 hover:bg-slate-50"
+        className="md:hidden fixed top-3.5 left-4 z-40 p-2 rounded-lg text-slate-400 hover:text-white transition-colors"
+        style={{ background: 'rgba(15,17,30,0.9)', border: '1px solid rgba(255,255,255,0.08)' }}
         aria-label="Open sidebar"
       >
         <Menu className="w-5 h-5" />
       </button>
 
-      {/* ── Mobile drawer overlay ── */}
+      {/* Mobile drawer */}
       {mobileOpen && (
         <div className="md:hidden fixed inset-0 z-50 flex">
-          {/* Backdrop */}
           <div
-            className="absolute inset-0 bg-slate-900/30 backdrop-blur-sm"
+            className="absolute inset-0 bg-black/70 backdrop-blur-sm"
             onClick={() => setMobileOpen(false)}
           />
-          {/* Drawer */}
-          <aside className="relative w-64 bg-white h-full shadow-2xl flex flex-col">
+          <aside
+            className="relative w-64 h-full flex flex-col"
+            style={{ background: 'rgba(8,9,18,0.98)', borderRight: '1px solid rgba(255,255,255,0.06)' }}
+          >
             <SidebarContent
               onClose={() => setMobileOpen(false)}
               onOpenHelp={() => setHelpOpen(true)}
@@ -194,98 +220,63 @@ export default function Sidebar() {
         </div>
       )}
 
-      {/* ── Help Modal ── */}
+      {/* Help Modal */}
       <Modal
         isOpen={helpOpen}
         onClose={() => setHelpOpen(false)}
         title="NyayaSaar Quick Guide"
         icon={HelpCircle}
-        iconBg="bg-slate-100"
-        iconColor="text-slate-900"
+        iconBg="bg-violet-500/10"
+        iconColor="text-violet-400"
       >
-        <div className="space-y-4">
-          <p className="text-slate-600 text-xs">
-            NyayaSaar simplifies complex legal documents into plain, understandable terms. Here is how each module works:
+        <div className="space-y-3">
+          <p className="text-slate-400 text-xs">
+            NyayaSaar simplifies complex legal documents into plain, understandable terms.
           </p>
-
-          <div className="space-y-3">
-            <div className="p-3 bg-slate-50 rounded-xl border border-slate-100 space-y-1">
-              <div className="flex items-center gap-2 font-bold text-xs text-slate-800">
-                <ScanText className="w-3.5 h-3.5 text-slate-900" />
-                <span>1. Analyze Document</span>
+          {[
+            { icon: ScanText, title: '1. Analyze Document', desc: 'Upload any PDF contract. NyayaSaar extracts key parties, dates, financial commitments, and high-attention clauses.' },
+            { icon: Sparkles, title: '2. Legal Language Simplifier', desc: 'Click any clause card in the analysis view to translate dense legalese into straightforward plain English.' },
+            { icon: MessageSquare, title: '3. Ask NyayaSaar (RAG)', desc: 'Ask specific questions about your agreement. Uses semantic retrieval with cosine similarity grounded in your document.' },
+            { icon: GitCompare, title: '4. Compare Documents', desc: 'Upload two agreements side-by-side to detect added, modified, or removed clauses with impact analysis.' },
+          ].map(({ icon: Icon, title, desc }) => (
+            <div
+              key={title}
+              className="p-3 rounded-xl space-y-1"
+              style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.07)' }}
+            >
+              <div className="flex items-center gap-2 font-bold text-xs text-slate-200">
+                <Icon className="w-3.5 h-3.5 text-violet-400" />
+                <span>{title}</span>
               </div>
-              <p className="text-xs text-slate-500">
-                Upload any PDF contract. NyayaSaar extracts key parties, dates, financial commitments, and high-attention clauses.
-              </p>
+              <p className="text-xs text-slate-500">{desc}</p>
             </div>
-
-            <div className="p-3 bg-slate-50 rounded-xl border border-slate-100 space-y-1">
-              <div className="flex items-center gap-2 font-bold text-xs text-slate-800">
-                <Sparkles className="w-3.5 h-3.5 text-slate-900" />
-                <span>2. Legal Language Simplifier</span>
-              </div>
-              <p className="text-xs text-slate-500">
-                Click any clause card in the analysis view to translate dense legalese into straightforward plain English with actionable context.
-              </p>
-            </div>
-
-            <div className="p-3 bg-slate-50 rounded-xl border border-slate-100 space-y-1">
-              <div className="flex items-center gap-2 font-bold text-xs text-slate-800">
-                <MessageSquare className="w-3.5 h-3.5 text-slate-900" />
-                <span>3. Ask NyayaSaar (RAG)</span>
-              </div>
-              <p className="text-xs text-slate-500">
-                Ask specific questions about your agreement. NyayaSaar uses a semantic retrieval pipeline with cosine similarity to return answers grounded strictly in retrieved clauses.
-              </p>
-            </div>
-
-            <div className="p-3 bg-slate-50 rounded-xl border border-slate-100 space-y-1">
-              <div className="flex items-center gap-2 font-bold text-xs text-slate-800">
-                <GitCompare className="w-3.5 h-3.5 text-slate-900" />
-                <span>4. Compare Documents</span>
-              </div>
-              <p className="text-xs text-slate-500">
-                Upload two agreements side-by-side to detect added, modified, or removed clauses with impact analysis.
-              </p>
-            </div>
-          </div>
+          ))}
         </div>
       </Modal>
 
-      {/* ── Legal Disclaimer Modal ── */}
+      {/* Disclaimer Modal */}
       <Modal
         isOpen={disclaimerOpen}
         onClose={() => setDisclaimerOpen(false)}
-        title="Legal Disclaimer & Privacy Notice"
+        title="Legal Disclaimer & Privacy"
         icon={ShieldCheck}
-        iconBg="bg-amber-50"
-        iconColor="text-amber-600"
+        iconBg="bg-amber-500/10"
+        iconColor="text-amber-400"
       >
-        <div className="space-y-3.5 text-xs text-slate-600">
-          <div className="p-3 bg-amber-50 border border-amber-200 rounded-xl text-amber-900 font-medium">
-            NyayaSaar provides general legal information and document assistance. It does not provide formal legal advice or legal representation.
+        <div className="space-y-3.5 text-xs text-slate-400">
+          <div className="p-3 rounded-xl" style={{ background: 'rgba(245,158,11,0.08)', border: '1px solid rgba(245,158,11,0.2)' }}>
+            <p className="text-amber-300 font-medium">NyayaSaar provides general legal information only. It does not provide formal legal advice or legal representation.</p>
           </div>
-
-          <div>
-            <h4 className="font-bold text-slate-800 mb-1">1. Not Legal Advice</h4>
-            <p>
-              The explanations, summaries, and answers generated by NyayaSaar are for educational and informational purposes only. No attorney-client relationship is created by using this software.
-            </p>
-          </div>
-
-          <div>
-            <h4 className="font-bold text-slate-800 mb-1">2. Verification Required</h4>
-            <p>
-              AI interpretations can occasionally make mistakes or miss nuance in localized jurisdictions. Always consult a qualified attorney before executing binding contracts.
-            </p>
-          </div>
-
-          <div>
-            <h4 className="font-bold text-slate-800 mb-1">3. Document Privacy</h4>
-            <p>
-              Uploaded documents are processed in-memory for session analysis and chunk retrieval. Files are not permanently stored on disk.
-            </p>
-          </div>
+          {[
+            { t: '1. Not Legal Advice', d: 'The explanations, summaries, and answers generated by NyayaSaar are for educational and informational purposes only. No attorney-client relationship is created.' },
+            { t: '2. Verification Required', d: 'AI interpretations can occasionally make mistakes. Always consult a qualified attorney before executing binding contracts.' },
+            { t: '3. Document Privacy', d: 'Uploaded documents are processed in-memory for session analysis. Files are not permanently stored on disk.' },
+          ].map(({ t, d }) => (
+            <div key={t}>
+              <h4 className="font-bold text-slate-300 mb-1">{t}</h4>
+              <p>{d}</p>
+            </div>
+          ))}
         </div>
       </Modal>
     </>
