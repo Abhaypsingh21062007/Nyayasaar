@@ -303,6 +303,7 @@ export async function analyzeDocumentText(text, metadata = {}) {
       attentionPoints: Array.isArray(analysis.attentionPoints) ? analysis.attentionPoints : [],
       _isDemo: false,
     };
+  } catch (err) {
     // Handle known Gemini API errors or fallback gracefully
     console.warn('[NyayaSaar AI] Gemini call failed or model unavailable:', err.message);
     return { ...buildMockAnalysis(metadata), _isDemo: true };
