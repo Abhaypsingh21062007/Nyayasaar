@@ -40,10 +40,11 @@ export const corsMiddleware = cors({
     // Allow non-browser requests (e.g. server-to-server, curl, tests, mobile tools)
     if (!origin) return callback(null, true);
 
-    // Allow local development ports (Vite, React dev servers)
+    // Allow local development ports and Vercel deployments
     if (
       origin.startsWith('http://localhost:') ||
-      origin.startsWith('http://127.0.0.1:')
+      origin.startsWith('http://127.0.0.1:') ||
+      origin.endsWith('.vercel.app')
     ) {
       return callback(null, true);
     }
@@ -53,8 +54,8 @@ export const corsMiddleware = cors({
       return callback(null, true);
     }
 
-    // In non-production, be permissive for preview ports
-    if (process.env.NODE_ENV !== 'production') {
+    // In non-production or Vercel, be permissive
+    if (process.env.NODE_ENV !== 'production' || process.env.VERCEL) {
       return callback(null, true);
     }
 

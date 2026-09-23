@@ -35,9 +35,9 @@ app.use((req, res) => {
 // ── Centralized Error Handling ──────────────────────────────────────────────
 app.use(errorHandler);
 
-// ── Start Server (only if not running under test runner) ─────────────────────
+// ── Start Server (only if not running under test runner or serverless) ───────
 let server = null;
-if (process.env.NODE_ENV !== 'test') {
+if (process.env.NODE_ENV !== 'test' && !process.env.VERCEL) {
   server = app.listen(config.port, () => {
     console.log(`[NyayaSaar Server] Running on http://localhost:${config.port}`);
     console.log(`[NyayaSaar Server] Environment: ${process.env.NODE_ENV || 'development'}`);
@@ -45,3 +45,5 @@ if (process.env.NODE_ENV !== 'test') {
 }
 
 export { app, server };
+export default app;
+
