@@ -6,14 +6,15 @@ import {
   Sparkles,
   ChevronRight,
   ArrowRight,
+  ShieldAlert,
 } from 'lucide-react';
 import { DEMO_DOCUMENT } from '../data/mockData';
 
 /* ── Small reusable pieces ─────────────────────────────── */
 function StatusPill({ icon: Icon, color, text }) {
   const colors = {
-    green: 'bg-emerald-50 text-emerald-700 border-emerald-100',
-    amber: 'bg-amber-50 text-amber-700 border-amber-100',
+    green: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
+    amber: 'bg-amber-500/10 text-amber-400 border-amber-500/20',
   };
   return (
     <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full border text-xs font-medium ${colors[color]}`}>
@@ -26,10 +27,10 @@ function StatusPill({ icon: Icon, color, text }) {
 function MockTabButton({ label, active }) {
   return (
     <button
-      className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-colors ${
+      className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
         active
-          ? 'bg-slate-900 text-white shadow-sm'
-          : 'text-slate-500 hover:text-slate-900 hover:bg-slate-100'
+          ? 'bg-violet-600/30 text-violet-200 border border-violet-500/40 shadow-sm'
+          : 'text-slate-400 hover:text-slate-200 hover:bg-white/[0.04]'
       }`}
     >
       {label}
@@ -41,31 +42,31 @@ function MockTabButton({ label, active }) {
 function MockDocumentWidget({ onTryDemo }) {
   return (
     <div className="relative w-full max-w-sm mx-auto lg:mx-0 lg:ml-auto">
-      {/* Decorative shadow card behind */}
-      <div className="absolute inset-0 translate-y-3 translate-x-3 bg-slate-200/50 rounded-2xl" />
+      {/* Decorative glow blob behind card */}
+      <div className="absolute -inset-1 bg-gradient-to-r from-violet-600/30 to-indigo-600/30 rounded-3xl blur-xl opacity-75 -z-10" />
 
       {/* Main card */}
-      <div className="relative bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+      <div className="relative bg-[#0d0f1a]/90 backdrop-blur-2xl rounded-2xl border border-white/[0.1] shadow-2xl overflow-hidden">
 
         {/* Header */}
-        <div className="flex items-center gap-3 px-4 py-3 border-b border-slate-100 bg-slate-50/50">
-          <div className="w-8 h-8 bg-slate-900 rounded-lg flex items-center justify-center flex-shrink-0">
+        <div className="flex items-center gap-3 px-4 py-3.5 border-b border-white/[0.07] bg-white/[0.02]">
+          <div className="w-8 h-8 bg-gradient-to-br from-violet-600 to-indigo-600 rounded-xl flex items-center justify-center flex-shrink-0 shadow-md shadow-violet-500/20">
             <FileText className="w-4 h-4 text-white" />
           </div>
           <div className="min-w-0">
-            <p className="text-sm font-semibold text-slate-800 truncate">Rental Agreement.pdf</p>
+            <p className="text-sm font-semibold text-slate-100 truncate">Rental Agreement.pdf</p>
             <p className="text-xs text-slate-400">Uploaded just now</p>
           </div>
         </div>
 
         {/* AI Analysis label */}
         <div className="flex items-center gap-2 px-4 pt-4 pb-2">
-          <Sparkles className="w-3.5 h-3.5 text-slate-900" />
-          <span className="text-xs font-semibold uppercase tracking-widest text-slate-900">AI Analysis</span>
+          <Sparkles className="w-3.5 h-3.5 text-violet-400" />
+          <span className="text-[11px] font-bold uppercase tracking-widest text-violet-400">AI Analysis</span>
         </div>
 
         {/* Tab bar */}
-        <div className="flex items-center gap-1 px-4 pb-3">
+        <div className="flex items-center gap-1.5 px-4 pb-3">
           <MockTabButton label="Document Summary" active={true} />
           <MockTabButton label="Clauses" active={false} />
           <MockTabButton label="Ask AI" active={false} />
@@ -78,9 +79,11 @@ function MockDocumentWidget({ onTryDemo }) {
         </div>
 
         {/* Summary block */}
-        <div className="mx-4 mb-3 p-3 bg-slate-50 rounded-lg border border-slate-100">
-          <p className="text-xs font-semibold text-slate-700 mb-1">Summary</p>
-          <p className="text-xs text-slate-500 leading-relaxed">
+        <div className="mx-4 mb-3 p-3 bg-white/[0.03] rounded-xl border border-white/[0.06]">
+          <p className="text-xs font-semibold text-slate-200 mb-1 flex items-center gap-1.5">
+            <Sparkles className="w-3 h-3 text-violet-400" /> Summary
+          </p>
+          <p className="text-xs text-slate-400 leading-relaxed">
             This is a fixed-term residential rental agreement for 11 months. Three clauses — termination,
             security deposit, and notice period — require your attention.
           </p>
@@ -95,13 +98,13 @@ function MockDocumentWidget({ onTryDemo }) {
           ].map((item) => (
             <div
               key={item.label}
-              className="flex items-center justify-between p-2.5 rounded-lg border border-amber-100 bg-amber-50/60"
+              className="flex items-center justify-between p-2.5 rounded-xl border border-amber-500/20 bg-amber-500/5 hover:bg-amber-500/10 transition-colors"
             >
               <div className="flex items-center gap-2">
-                <AlertTriangle className="w-3.5 h-3.5 text-amber-500 flex-shrink-0" />
-                <span className="text-xs font-medium text-slate-700">{item.label}</span>
+                <ShieldAlert className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" />
+                <span className="text-xs font-medium text-slate-200">{item.label}</span>
               </div>
-              <ChevronRight className="w-3.5 h-3.5 text-slate-300" />
+              <ChevronRight className="w-3.5 h-3.5 text-slate-500" />
             </div>
           ))}
         </div>
@@ -110,7 +113,7 @@ function MockDocumentWidget({ onTryDemo }) {
         <div className="px-4 pb-4">
           <button
             onClick={onTryDemo}
-            className="w-full flex items-center justify-center gap-1.5 py-2.5 bg-slate-900 text-white text-xs font-semibold rounded-xl hover:bg-slate-800 transition-colors shadow-sm"
+            className="w-full flex items-center justify-center gap-2 py-2.5 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white text-xs font-semibold rounded-xl transition-all shadow-lg shadow-violet-600/30 active:scale-[0.98]"
           >
             View Full Analysis <ArrowRight className="w-3.5 h-3.5" />
           </button>
@@ -138,10 +141,9 @@ export default function Hero() {
       id="home"
       className="relative pt-32 pb-20 md:pt-40 md:pb-28 overflow-hidden"
     >
-      {/* Colorful gradient background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-violet-50 via-white to-cyan-50 -z-10" />
-      <div className="absolute -top-24 -left-24 w-96 h-96 bg-violet-200/30 rounded-full blur-3xl -z-10" />
-      <div className="absolute -bottom-24 -right-24 w-96 h-96 bg-cyan-200/30 rounded-full blur-3xl -z-10" />
+      {/* Background ambient lighting */}
+      <div className="absolute top-1/4 left-1/4 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-violet-600/15 rounded-full blur-[120px] pointer-events-none -z-10" />
+      <div className="absolute top-1/3 right-10 w-[400px] h-[400px] bg-indigo-600/15 rounded-full blur-[100px] pointer-events-none -z-10" />
 
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
@@ -149,41 +151,43 @@ export default function Hero() {
           {/* Left column */}
           <div className="flex flex-col gap-6">
             {/* Badge */}
-            <div className="inline-flex w-fit items-center gap-2 px-3 py-1.5 bg-violet-100 border border-violet-200 rounded-full">
-              <span className="text-violet-600 text-xs font-bold">✦</span>
-              <span className="text-xs font-semibold text-violet-700">
-                AI-powered legal document assistance
+            <div className="inline-flex w-fit items-center gap-2 px-3 py-1.5 bg-violet-500/10 border border-violet-500/25 rounded-full backdrop-blur-md">
+              <span className="text-violet-400 text-xs font-bold">✦</span>
+              <span className="text-xs font-semibold text-violet-300">
+                AI-Powered Legal Document Intelligence
               </span>
             </div>
 
             {/* Heading */}
-            <h1 className="text-4xl sm:text-5xl font-extrabold text-slate-900 leading-tight tracking-tight">
+            <h1 className="text-4xl sm:text-5xl lg:text-[3.25rem] font-extrabold text-white leading-[1.15] tracking-tight">
               Understand Legal Information.{' '}
-              <span className="bg-gradient-to-r from-violet-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent">Without the Legal Jargon.</span>
+              <span className="animate-shimmer">Without the Legal Jargon.</span>
             </h1>
 
             {/* Sub-text */}
-            <p className="text-lg text-slate-500 leading-relaxed max-w-lg">
-              NyayaSaar helps you understand legal documents, identify important clauses,
-              compare agreements, and ask questions — all in simple language.
+            <p className="text-base sm:text-lg text-slate-400 leading-relaxed max-w-lg">
+              NyayaSaar breaks down complex agreements, highlights hidden clauses, compares contract revisions, and answers your questions — instantly in plain language.
             </p>
 
             {/* Buttons */}
-            <div className="flex flex-wrap gap-3">
-              <Link to="/upload" className="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-violet-600 to-indigo-600 text-white text-sm font-semibold rounded-xl hover:from-violet-700 hover:to-indigo-700 active:scale-[0.98] transition-all duration-200 shadow-md shadow-violet-300/40">
+            <div className="flex flex-wrap items-center gap-3.5 pt-2">
+              <Link
+                to="/upload"
+                className="btn-primary py-3 px-6 text-sm shadow-xl shadow-violet-600/30"
+              >
                 Analyze a Document <ArrowRight className="w-4 h-4" />
               </Link>
               <button
                 type="button"
                 onClick={handleTryDemo}
-                className="btn-secondary"
+                className="btn-secondary py-3 px-6 text-sm"
               >
-                Try Demo
+                Try Interactive Demo
               </button>
             </div>
 
             {/* Disclaimer */}
-            <p className="text-xs text-slate-400 mt-1 max-w-md leading-relaxed">
+            <p className="text-xs text-slate-500 mt-1 max-w-md leading-relaxed">
               NyayaSaar provides general legal information and document assistance,
               not professional legal advice.
             </p>
