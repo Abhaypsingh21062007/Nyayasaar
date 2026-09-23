@@ -1,5 +1,19 @@
-import { PDFParse } from 'pdf-parse';
 import { cleanText, getTextMetrics } from '../utils/textCleaner.js';
+
+// Polyfill DOM objects required by pdfjs-dist in headless / serverless Node.js environments
+if (typeof globalThis.DOMMatrix === 'undefined') {
+  globalThis.DOMMatrix = class DOMMatrix {
+    constructor() {
+      this.a = 1; this.b = 0; this.c = 0; this.d = 1; this.e = 0; this.f = 0;
+    }
+  };
+}
+if (typeof globalThis.ImageData === 'undefined') {
+  globalThis.ImageData = class ImageData {};
+}
+if (typeof globalThis.Path2D === 'undefined') {
+  globalThis.Path2D = class Path2D {};
+}
 
 /**
  * Validates that a buffer starts with standard PDF magic bytes "%PDF-"
@@ -42,6 +56,7 @@ export async function extractTextFromPdfBuffer(buffer, _originalname = 'document
 
   let parser = null;
   try {
+    const { PDFParse } = await import('pdf-parse');
     parser = new PDFParse({ data: buffer });
     const result = await parser.getText();
     const pageCount = result.total || 0;
