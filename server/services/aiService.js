@@ -303,43 +303,9 @@ export async function analyzeDocumentText(text, metadata = {}) {
       attentionPoints: Array.isArray(analysis.attentionPoints) ? analysis.attentionPoints : [],
       _isDemo: false,
     };
-  } catch (err) {
-    if (err.statusCode) throw err;
-
-    // Handle known Gemini API errors
-    const message = String(err.message || '');
-    if (message.includes('API key') || message.includes('401') || message.includes('403')) {
-      const apiErr = new Error(
-        'Gemini API authentication failed. Please verify your GEMINI_API_KEY in the .env file.'
-      );
-      apiErr.statusCode = 401;
-      apiErr.code = 'AI_AUTH_ERROR';
-      throw apiErr;
-    }
-    if (message.includes('quota') || message.includes('429')) {
-      const quotaErr = new Error(
-        'Gemini API quota exceeded. Please wait a moment and try again.'
-      );
-      quotaErr.statusCode = 429;
-      quotaErr.code = 'AI_QUOTA_EXCEEDED';
-      throw quotaErr;
-    }
-    if (message.includes('timeout') || message.includes('ETIMEDOUT')) {
-      const timeoutErr = new Error(
-        'The AI analysis timed out. The document may be too long. Please try again.'
-      );
-      timeoutErr.statusCode = 504;
-      timeoutErr.code = 'AI_TIMEOUT';
-      throw timeoutErr;
-    }
-
-    console.error('[NyayaSaar AI] Unexpected error:', err);
-    const genericErr = new Error(
-      'AI analysis failed due to an unexpected error. Please try again later.'
-    );
-    genericErr.statusCode = 502;
-    genericErr.code = 'AI_ERROR';
-    throw genericErr;
+    // Handle known Gemini API errors or fallback gracefully
+    console.warn('[NyayaSaar AI] Gemini call failed or model unavailable:', err.message);
+    return { ...buildMockAnalysis(metadata), _isDemo: true };
   }
 }
 
@@ -417,35 +383,9 @@ export async function explainClauseService(clauseInput, documentText = '', metad
       _isDemo: false,
     };
   } catch (err) {
-    if (err.statusCode) throw err;
-
-    const message = String(err.message || '');
-    if (message.includes('API key') || message.includes('401') || message.includes('403')) {
-      const apiErr = new Error(
-        'Gemini API authentication failed. Please verify your GEMINI_API_KEY in the .env file.'
-      );
-      apiErr.statusCode = 401;
-      apiErr.code = 'AI_AUTH_ERROR';
-      throw apiErr;
-    }
-    if (message.includes('quota') || message.includes('429')) {
-      const quotaErr = new Error('Gemini API quota exceeded. Please wait a moment and try again.');
-      quotaErr.statusCode = 429;
-      quotaErr.code = 'AI_QUOTA_EXCEEDED';
-      throw quotaErr;
-    }
-    if (message.includes('timeout') || message.includes('ETIMEDOUT')) {
-      const timeoutErr = new Error('The clause explanation request timed out. Please try again.');
-      timeoutErr.statusCode = 504;
-      timeoutErr.code = 'AI_TIMEOUT';
-      throw timeoutErr;
-    }
-
-    console.error('[NyayaSaar AI] Unexpected clause error:', err);
-    const genericErr = new Error('Clause explanation failed due to an unexpected error.');
-    genericErr.statusCode = 502;
-    genericErr.code = 'AI_ERROR';
-    throw genericErr;
+    if (err.statusCode && err.statusCode < 500) throw err;
+    console.warn('[NyayaSaar AI] Clause explanation error — falling back to mock:', err.message);
+    return { ...buildMockClauseExplanation(clauseInput.trim(), metadata), _isDemo: true };
   }
 }
 
@@ -705,35 +645,9 @@ export async function chatDocumentService(question, documentText = '', metadata 
       _isDemo: false,
     };
   } catch (err) {
-    if (err.statusCode) throw err;
-
-    const message = String(err.message || '');
-    if (message.includes('API key') || message.includes('401') || message.includes('403')) {
-      const apiErr = new Error(
-        'Gemini API authentication failed. Please verify your GEMINI_API_KEY in the .env file.'
-      );
-      apiErr.statusCode = 401;
-      apiErr.code = 'AI_AUTH_ERROR';
-      throw apiErr;
-    }
-    if (message.includes('quota') || message.includes('429')) {
-      const quotaErr = new Error('Gemini API quota exceeded. Please wait a moment and try again.');
-      quotaErr.statusCode = 429;
-      quotaErr.code = 'AI_QUOTA_EXCEEDED';
-      throw quotaErr;
-    }
-    if (message.includes('timeout') || message.includes('ETIMEDOUT')) {
-      const timeoutErr = new Error('The chat request timed out. Please try asking again.');
-      timeoutErr.statusCode = 504;
-      timeoutErr.code = 'AI_TIMEOUT';
-      throw timeoutErr;
-    }
-
-    console.error('[NyayaSaar AI] Unexpected chat error:', err);
-    const genericErr = new Error('Document chat failed due to an unexpected error.');
-    genericErr.statusCode = 502;
-    genericErr.code = 'AI_ERROR';
-    throw genericErr;
+    if (err.statusCode && err.statusCode < 500) throw err;
+    console.warn('[NyayaSaar AI] Chat call failed — falling back to mock:', err.message);
+    return { ...buildMockChatResponse(question, documentText, metadata), _isDemo: true };
   }
 }
 
@@ -928,35 +842,9 @@ export async function compareDocumentsService(docAText = '', docBText = '', meta
       _isDemo: false,
     };
   } catch (err) {
-    if (err.statusCode) throw err;
-
-    const message = String(err.message || '');
-    if (message.includes('API key') || message.includes('401') || message.includes('403')) {
-      const apiErr = new Error(
-        'Gemini API authentication failed. Please verify your GEMINI_API_KEY in the .env file.'
-      );
-      apiErr.statusCode = 401;
-      apiErr.code = 'AI_AUTH_ERROR';
-      throw apiErr;
-    }
-    if (message.includes('quota') || message.includes('429')) {
-      const quotaErr = new Error('Gemini API quota exceeded. Please wait a moment and try again.');
-      quotaErr.statusCode = 429;
-      quotaErr.code = 'AI_QUOTA_EXCEEDED';
-      throw quotaErr;
-    }
-    if (message.includes('timeout') || message.includes('ETIMEDOUT')) {
-      const timeoutErr = new Error('The document comparison timed out. Please try again.');
-      timeoutErr.statusCode = 504;
-      timeoutErr.code = 'AI_TIMEOUT';
-      throw timeoutErr;
-    }
-
-    console.error('[NyayaSaar AI] Unexpected comparison error:', err);
-    const genericErr = new Error('Document comparison failed due to an unexpected error.');
-    genericErr.statusCode = 502;
-    genericErr.code = 'AI_ERROR';
-    throw genericErr;
+    if (err.statusCode && err.statusCode < 500) throw err;
+    console.warn('[NyayaSaar AI] Compare call failed — falling back to mock:', err.message);
+    return { ...buildMockComparison(docAText, docBText, metaA, metaB), _isDemo: true };
   }
 }
 

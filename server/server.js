@@ -8,6 +8,9 @@ import { apiLimiter } from './middleware/rateLimiter.js';
 
 const app = express();
 
+// Trust proxy for Vercel/reverse proxies
+app.set('trust proxy', 1);
+
 // ── Security Headers & Compression ──────────────────────────────────────────
 app.use(helmetMiddleware);
 app.use(compression());
